@@ -1,9 +1,9 @@
 package com.wesan.antispam;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
+// read properties file
 public class Config {
     private final Properties properties = new Properties();
 
@@ -15,5 +15,9 @@ public class Config {
 
     public String getToken() {
         return properties.getProperty("token");
+    }
+
+    public int getDeadLine() throws NumberFormatException {
+        return Integer.parseInt(properties.getProperty("deadline"));
     }
 }
