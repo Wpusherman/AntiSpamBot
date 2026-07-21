@@ -16,17 +16,19 @@ public class Main extends ListenerAdapter {
             Config config = new Config();
             String token = config.getToken();
             try {
-                int deadline = config.getDeadLine();
-                DeadlineScheduler scheduler = new DeadlineScheduler();
+                int deadline = config.getDeadline();
                 JDA api = JDABuilder.createDefault(token)
                         .enableIntents(
                                 GatewayIntent.GUILD_MEMBERS,
                                 GatewayIntent.GUILD_MESSAGES
                                 )
-                        .addEventListeners(new Main())
-                        .addEventListeners(new JoinListener(deadline, scheduler))
-                        .addEventListeners(new MessageListener(scheduler))
                         .build();
+                DeadlineScheduler scheduler = new DeadlineScheduler(api);
+
+                api.addEventListener(new Main(),
+                        new JoinListener(deadline, scheduler),
+                        new MessageListener(scheduler)
+                );
 
             } catch (NumberFormatException e) {
                 return;
@@ -41,5 +43,6 @@ public class Main extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         System.out.println("Bot is ready!");
+
     }
 }

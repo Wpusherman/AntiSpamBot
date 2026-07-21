@@ -17,7 +17,7 @@ public class Config {
         return properties.getProperty("token");
     }
 
-    public int getDeadLine() throws NumberFormatException {
+    public int getDeadline() throws NumberFormatException {
         return Integer.parseInt(properties.getProperty("deadline"));
     }
 }
