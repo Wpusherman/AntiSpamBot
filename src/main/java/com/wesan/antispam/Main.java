@@ -43,6 +43,5 @@ public class Main extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         System.out.println("Bot is ready!");
-
     }
 }

@@ -2,7 +2,6 @@ package com.wesan.antispam;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;

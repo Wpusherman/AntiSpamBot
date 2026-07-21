@@ -25,7 +25,7 @@ public class JoinListener extends ListenerAdapter {
         System.out.println(user.getName() + " (" + user.getId() + ") joined!");
         OffsetDateTime time = member.getTimeJoined();
         System.out.println("Time: " + time);
-        OffsetDateTime deadLineTime = time.plusMinutes(deadline);
+        OffsetDateTime deadLineTime = time.plusHours(deadline);
         System.out.println("Deadline Time: " + deadLineTime);
 
         scheduler.register(event.getGuild().getId(), user.getId(), deadLineTime, time);
