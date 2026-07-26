@@ -21,6 +21,9 @@ public class JoinListener extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin (@NotNull GuildMemberJoinEvent event) {
         User user = event.getUser();
+
+        if (user.isBot()) return;
+
         Member member = event.getMember();
         System.out.println(user.getName() + " (" + user.getId() + ") joined!");
         OffsetDateTime time = member.getTimeJoined();

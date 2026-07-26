@@ -8,34 +8,60 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main extends ListenerAdapter {
+    private final RecoveryService recoveryService;
+    private final AtomicBoolean recovered = new AtomicBoolean(false);
 
-    public static void main(String[] args) throws Exception { // setup
+    public Main(RecoveryService recoveryService) {
+        this.recoveryService = recoveryService;
+    }
+
+    public static void main(String[] args) { // setup
         try {
             Config config = new Config();
             String token = config.getToken();
-            try {
-                int deadline = config.getDeadline();
-                JDA api = JDABuilder.createDefault(token)
-                        .enableIntents(
-                                GatewayIntent.GUILD_MEMBERS,
-                                GatewayIntent.GUILD_MESSAGES
-                                )
-                        .build();
-                DeadlineScheduler scheduler = new DeadlineScheduler(api);
+            int deadline = config.getDeadline();
 
-                api.addEventListener(new Main(),
-                        new JoinListener(deadline, scheduler),
-                        new MessageListener(scheduler)
+            if (token == null || token.isBlank()) {
+                throw new IllegalArgumentException(
+                        "Bot token is not configured."
                 );
-
-            } catch (NumberFormatException e) {
-                return;
             }
+
+            if (deadline <= 0) {
+                throw new IllegalArgumentException(
+                        "deadline must be greater than 0."
+                );
+            }
+
+            JDA api = JDABuilder.createDefault(token)
+                    .enableIntents(
+                            GatewayIntent.GUILD_MEMBERS,
+                            GatewayIntent.GUILD_MESSAGES
+                    )
+                    .build();
+            DeadlineScheduler scheduler = new DeadlineScheduler(api);
+
+            RecoveryService recoveryService = new RecoveryService(api, scheduler, deadline);
+
+            api.addEventListener(new Main(),
+                    new JoinListener(deadline, scheduler),
+                    new MessageListener(scheduler)
+            );
+
+            Runtime.getRuntime().addShutdownHook(new Thread(scheduler::shutdown));
         }
         catch (IOException e) {
+            System.err.println("Failed to load config.properties");
             e.printStackTrace();
+        }
+        catch (NumberFormatException e) {
+            System.err.println("Deadline must be an integer");
+        }
+        catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
         }
     }
 

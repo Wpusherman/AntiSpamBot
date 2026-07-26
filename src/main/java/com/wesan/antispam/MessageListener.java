@@ -16,13 +16,9 @@ public class MessageListener extends ListenerAdapter {
             return;
         }
 
-        if (event.getAuthor().isBot() || event.isWebhookMessage()) {
+        if (!MessageRule.isQualifyingMessage(event.getMessage())) {
             return;
         }
-
-        if (event.getMessage().getType().isSystem()) {
-            return;
-        } // Welcome Msg
 
         String guildId = event.getGuild().getId();
         String userId = event.getAuthor().getId();
