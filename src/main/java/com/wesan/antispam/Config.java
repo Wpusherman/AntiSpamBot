@@ -18,6 +18,6 @@ public class Config {
     }
 
     public int getDeadline() throws NumberFormatException {
-        return Integer.parseInt(properties.getProperty("deadline"));
+        return Integer.parseInt(properties.getProperty("deadlineHours"));
     }
 }

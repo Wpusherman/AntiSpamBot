@@ -54,8 +54,8 @@ public class RecoveryService {
             PendingMember pendingMember = new PendingMember(
                     guild.getId(),
                     member.getId(),
-                    joinedAt,
-                    joinedAt.plusHours(deadlineHours)
+                    deadlineAt,
+                    joinedAt
             );
 
             candidates.put(key, pendingMember);

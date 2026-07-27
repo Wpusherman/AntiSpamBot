@@ -46,7 +46,7 @@ public class Main extends ListenerAdapter {
 
             RecoveryService recoveryService = new RecoveryService(api, scheduler, deadline);
 
-            api.addEventListener(new Main(),
+            api.addEventListener(new Main(recoveryService),
                     new JoinListener(deadline, scheduler),
                     new MessageListener(scheduler)
             );
@@ -69,5 +69,8 @@ public class Main extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         System.out.println("Bot is ready!");
+        if (recovered.compareAndSet(false, true)) {
+            recoveryService.recover();
+        }
     }
 }
