@@ -17,7 +17,11 @@ public class Config {
         return properties.getProperty("token");
     }
 
-    public int getDeadline() throws NumberFormatException {
+    public int getDeadlineHours() throws NumberFormatException {
         return Integer.parseInt(properties.getProperty("deadlineHours"));
+    }
+
+    public int getRecoveryHours() throws NumberFormatException {
+        return Integer.parseInt(properties.getProperty("recoveryHours", "4"));
     }
 }

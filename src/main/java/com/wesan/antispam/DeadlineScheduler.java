@@ -106,14 +106,13 @@ public class DeadlineScheduler {
             return;
         }
 
-        guild.retrieveMemberById(expired.userId()).queue(
-                member -> {
-                    ModerationService.kick(member);
-                },
-                error -> {
-                    System.err.println("Failed to retrieve member: " + expired.userId());
-                    error.printStackTrace();
-                }
-        );
+        ModerationService.kick(guild, expired.userId());
+    }
+
+    public synchronized void shutdown() {
+        if (nextTask != null) {
+            nextTask.cancel(false);
+        }
+        ses.shutdownNow();
     }
 }
