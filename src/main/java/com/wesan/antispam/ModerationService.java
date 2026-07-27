@@ -1,9 +1,22 @@
 package com.wesan.antispam;
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 
 public class ModerationService {
     private static final String REASON = "You have been kicked from the server for violating the rules.";
+    private ModerationService() {}
+
+    public static void kick(Guild guild, String userId) {
+        guild.retrieveMemberById(userId).queue(
+                ModerationService::kick,
+                error -> {
+                    System.err.println("Failed to retrieve member: " + userId);
+                    error.printStackTrace();
+                }
+        );
+    }
+
     public static void kick(Member member) {
         member.kick()
                 .reason(REASON)

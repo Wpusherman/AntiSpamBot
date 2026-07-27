@@ -5,9 +5,10 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 public class MessageListener extends ListenerAdapter {
-    private final DeadlineScheduler scheduler;
-    public MessageListener(DeadlineScheduler scheduler) {
-        this.scheduler = scheduler;
+    private final RecoveryService recoveryService;
+
+    public MessageListener(RecoveryService recoveryService) {
+        this.recoveryService = recoveryService;
     }
 
     @Override
@@ -24,7 +25,7 @@ public class MessageListener extends ListenerAdapter {
         String userId = event.getAuthor().getId();
 
         // catch message
-        boolean completed = scheduler.complete(guildId, userId);
+        boolean completed = recoveryService.complete(guildId, userId);
         if (completed) {
             System.out.println(guildId + ": " + userId + " completed the requirement.");
         }

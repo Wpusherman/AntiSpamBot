@@ -22,7 +22,8 @@ public class Main extends ListenerAdapter {
         try {
             Config config = new Config();
             String token = config.getToken();
-            int deadline = config.getDeadline();
+            int deadlineHours = config.getDeadlineHours();
+            int recoveryHours = config.getRecoveryHours();
 
             if (token == null || token.isBlank()) {
                 throw new IllegalArgumentException(
@@ -30,9 +31,15 @@ public class Main extends ListenerAdapter {
                 );
             }
 
-            if (deadline <= 0) {
+            if (deadlineHours <= 0) {
                 throw new IllegalArgumentException(
-                        "deadline must be greater than 0."
+                        "deadlineHours must be greater than 0."
+                );
+            }
+
+            if (recoveryHours < deadlineHours) {
+                throw new IllegalArgumentException(
+                        "recoveryHours must be greater than or equal to deadlineHours."
                 );
             }
 
@@ -44,11 +51,16 @@ public class Main extends ListenerAdapter {
                     .build();
             DeadlineScheduler scheduler = new DeadlineScheduler(api);
 
-            RecoveryService recoveryService = new RecoveryService(api, scheduler, deadline);
+            RecoveryService recoveryService = new RecoveryService(
+                    api,
+                    scheduler,
+                    deadlineHours,
+                    recoveryHours
+            );
 
             api.addEventListener(new Main(recoveryService),
-                    new JoinListener(deadline, scheduler),
-                    new MessageListener(scheduler)
+                    new JoinListener(deadlineHours, scheduler),
+                    new MessageListener(recoveryService)
             );
 
             Runtime.getRuntime().addShutdownHook(new Thread(scheduler::shutdown));
@@ -58,7 +70,7 @@ public class Main extends ListenerAdapter {
             e.printStackTrace();
         }
         catch (NumberFormatException e) {
-            System.err.println("Deadline must be an integer");
+            System.err.println("deadlineHours and recoveryHours must be integers");
         }
         catch (IllegalArgumentException e) {
             System.err.println(e.getMessage());
